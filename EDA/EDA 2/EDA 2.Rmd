@@ -1,0 +1,150 @@
+---
+title: "EDA 2"
+author: "Charlie Roth"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load Packages and Data
+
+I load the packages 'tidyverse'. I then load my population dataset using read_csv() and name it "pop".
+
+```{r}
+library(tidyverse)
+
+pop <- read_csv("final_pop_data.csv")
+```
+
+## Exploring
+
+I start by filtering for the 5-year population estimate from 2006 to 2010.
+
+```{r}
+pop1 <- pop |>
+  filter(years == "2006-2010")
+```
+
+I use summary to see the basic statistics of the population during that time.
+
+```{r}
+summary(pop1$total_pop)
+```
+
+I do the same thing for 2011 to 2015.
+
+```{r}
+pop2 <- pop |>
+  filter(years == "2011-2015")
+```
+
+
+```{r}
+summary(pop2$total_pop)
+```
+
+I do it again for 2016 to 2020.
+
+```{r}
+pop3 <- pop |>
+  filter(years == "2016-2020")
+```
+
+
+```{r}
+summary(pop3$total_pop)
+```
+
+From these statistics you can see that the years with the highest population was 2016 to 2020. These years also had the lowest population.
+
+I create a faceted bar chart for each of these years, grouped by the counties surrounding the national parks. I do this to see the changes throughout the years.
+
+```{r}
+options(scipen = 999)
+plot1 <- pop |>
+  ggplot(aes(county, total_pop, fill = county)) +
+  geom_col() +
+  theme_light() +
+  scale_fill_manual(values = c("#9ecae1", "#3182bd", "#105080"), labels = c("Arkansas County", "Benton County", "Christian/Greene\nCounties")) +
+  facet_wrap(~years) +
+  labs(x = "County",
+       y = "Population",
+       title = "Populations of Counties for Three\n5-Year Census Estimates",
+       fill = "County")
+plot1 + theme(axis.text.x = element_blank())
+```
+
+From this plot you can see that Christian county and Greene county that surround Wilson's Creek have the highest population. Arkansas county which surrounds Arkansas Post has the smallest population. These populations correspond with the populations of deer in the parks.
+
+Next I filter for Arkansas county so I can see the changes in population in more detail.
+
+```{r}
+pop4 <- pop |>
+  filter(county == "Arkansas County, Arkansas")
+```
+
+I create a plot of the population in arkansas county for each 5-year census estimate.
+
+```{r}
+plot2 <- pop4 |>
+  ggplot(aes(years, total_pop, fill = years)) +
+  geom_col() +
+  theme_classic() +
+  scale_fill_manual(values = c("#b2ff8c", "#a5edff", "#ccbfff")) +
+  guides(fill = "none") +
+  labs(x = "Years",
+       y = "Population",
+       title = "Populations for 5-Year Census Estimates\nin Arkansas County, Arkansas")
+plot2
+```
+
+From this plot you can see that the population is going down.
+
+I repeat this for Benton county, that surrounds Pea Ridge Park.
+
+```{r}
+pop5 <- pop |>
+  filter(county == "Benton County, Arkansas")
+```
+
+
+```{r}
+plot3 <- pop5 |>
+  ggplot(aes(years, total_pop, fill = years)) +
+  geom_col() +
+  theme_classic() +
+  scale_fill_manual(values = c("#ffc6c2", "#fae9da", "#c3e0dd")) +
+  guides(fill = "none") +
+  labs(x = "Years",
+       y = "Population",
+       title = "Populations for 5-Year Census Estimates\nin Benton County, Arkansas")
+plot3
+```
+
+Unlike Arkansas county, Benton county's population increased.
+
+I repeat the same process for Christian county and Greene county.
+
+```{r}
+pop6 <- pop |>
+  filter(county == "Christian/Greene Counties, Missouri")
+```
+
+
+```{r}
+plot4 <- pop6 |>
+  ggplot(aes(years, total_pop, fill = years)) +
+  geom_col() +
+  theme_classic() +
+  scale_fill_manual(values = c("#ece2f0", "#a6bddb", "#1c9099")) +
+  guides(fill = "none") +
+  labs(x = "Years",
+       y = "Population",
+       title = "Populations for 5-Year Census Estimates\nin Christian/Greene Counties, Missouri")
+plot4
+```
+
+Christian and Greene county increased like Benton but not as much.

@@ -1,0 +1,200 @@
+---
+title: "DATA 205 EDA"
+author: "Charlie Roth"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load Packages and Data
+
+I load the packages 'tidyverse', 'viridisLite', and 'paletteer'. I then load my data using read_csv() and named it "clean_deer".
+
+```{r}
+library(tidyverse)
+library(viridisLite)
+library(paletteer)
+library(GGally)
+
+clean_deer <- read_csv("clean_deer.csv")
+```
+
+## Exploring
+
+I used summary() to see some baseline statistics of BeginTempCelsius.
+
+```{r}
+summary(clean_deer$BeginTempCelsius)
+```
+
+From this table, I calculated the Interquartile Range (IQR) to see if there are any outliers or skews.
+IQR: 9.80 - 0.30 = 9.50
+Next I will calculate Q1 - 1.5(IQR) and Q3 + 1.5(IQR)
+0.30 - 1.5(9.50) = -13.95
+9.80 + 1.5(9.50) = 24.05
+
+From these calculations you can see that there are some values below -13.95 and above 24.05 which are classified as outliers.
+
+I created a histogram to show the distribution of data.
+
+```{r}
+clean_deer |>
+  ggplot(aes(BeginTempCelsius, group = BeginTempCelsius)) +
+  geom_histogram(aes(fill = BeginTempCelsius), bins = 15) +
+  scale_fill_paletteer_c("grDevices::Purple-Yellow", direction = 1) +
+  labs(x = "Temperature in Celsius",
+       y = "Frequency",
+       fill = "Temp.",
+       title = "Frequency of Temperature")
+```
+
+You can see from the histogram that it is unimodal and symmetrical which means the data has a normal distribution. You can also see that the most frequent temperature during a deer sighting is around 4 degrees Celsius.
+
+## Modeling
+
+For analyses, I converted 'BeginPrecip', 'VegType', and 'Month' into factors
+
+```{r}
+clean_deer$BeginPrecip <- as.factor(clean_deer$BeginPrecip)
+clean_deer$VegType <- as.factor(clean_deer$VegType)
+clean_deer$Month <- as.factor(clean_deer$Month)
+```
+
+I use colnames() to display the name of all the columns in the dataset. I did this to see what variables I might want to use in my baseline regression model.
+
+```{r}
+colnames(clean_deer)
+```
+
+From all the variables, I chose DeerNum to be my target variable and BeginTempCelsius, BeginPrecip, VegType, and Month to be my predictor variables.
+
+```{r}
+options(scipen = 0)
+plot_lm <- lm(DeerNum ~ BeginTempCelsius + BeginPrecip + VegType + Month, data = clean_deer)
+summary(plot_lm)
+```
+
+I started with a baseline model to see if there are any correlations or associations. You can see that the p-values for every variable besides Month03, Outside Park, Rain, and Snow are very low. This means that those variables have a significant relationship with DeerNum. The adjusted r-squared is also very low which means that DeerNum and these variables are not correlated.
+
+For my second model, I chose to do a linear regression with DeerNum and BeginTempCelsius to get a closer look at their relationship.
+
+```{r}
+plot_lm2 <- lm(DeerNum ~ BeginTempCelsius, data = clean_deer)
+summary(plot_lm2)
+```
+
+From this model you can see that they still have a significant relationship but the adjusted r-squared got even smaller which means that the temperature and number of deer are not linearly correlated.
+
+I created a scatterplot to visualize the regression model.
+
+```{r}
+plot1 <- clean_deer |>
+  ggplot(aes(DeerNum, BeginTempCelsius)) +
+  geom_point(color = "cornflowerblue", fill = "lightskyblue2", shape = 21, size = 3, alpha = .6) +
+  geom_smooth(method = 'lm', formula = y~x, linewidth = 1, color = "navyblue") +
+  theme_light() +
+  labs(x = "Number of Deer",
+       y = "Temperature in Celsius",
+       title = "Number of Deer vs Temperature")
+plot1
+```
+
+Again you can see that the relationship between number of deer and temperature is not linear.
+
+For my third model, I did a similar one to the second model but with BeginPrecip instead of BeginTempCelsius again to get a closer look at their relationship.
+
+```{r}
+plot_lm3 <- lm(DeerNum ~ BeginPrecip, data = clean_deer)
+summary(plot_lm3)
+```
+
+From this model you can see that the p-values are not very significant and the r-squared is very small which means that there is no significance to their relationship.
+
+I created a boxplot so you can see this.
+
+```{r}
+plot2 <- clean_deer |>
+  ggplot(aes(BeginPrecip, DeerNum, color = BeginPrecip)) +
+  geom_boxplot() +
+  facet_wrap(~ParkName) +
+  scale_x_discrete(guide = guide_axis(angle = 45)) +
+  scale_color_manual(values = c("#6B3074", "#6142A5", "#608FC3", "#81B6A7", "#A1CAA7")) +
+  theme_bw() +
+  labs(
+    x = "Precipitation",
+    y = "Number of Deer",
+    title = "Number of Deer Sighted in Different Weather Types for Each Park"
+  )
+plot2 + theme(legend.position = "none")
+```
+
+From this plot you can see that there is not any patterns so the relationship is not worth exploring further.
+
+For my fourth model I did the same as the other two models with VegType.
+
+```{r}
+plot_lm4 <- lm(DeerNum ~ VegType, data = clean_deer)
+summary(plot_lm4)
+```
+
+From this model you can see the p-values for all vegetation type is significant except Outside Park. The r-squared is still small so there is no correlation in this relationship.
+
+I performed a summary on VegType to see how many observations there are for each vegetation type.
+
+```{r}
+summary(clean_deer$VegType)
+```
+
+I decided to remove Outside Park as there are only 3 observations and there is no significance between it and the number of deer.
+
+```{r}
+clean_deer2 <- clean_deer |>
+  filter(VegType != "Outside Park")
+```
+
+I made a bar graph with the number of deer sighted for each vegetation type. I did this to see if I can connect certain vegetation to each park to see if a type of vegetation is the cause for a larger number of deer at Wilson's Creek Park.
+
+```{r}
+plot3 <- clean_deer2 |>
+  group_by(VegType)
+ggplot(plot3, aes(VegType, DeerNum, fill = VegType)) +
+  geom_col() +
+  coord_flip() +
+  theme_classic() +
+  scale_fill_viridis(discrete = TRUE, option = "plasma") +
+  guides(fill = "none") +
+  labs(y = "Number of Deer",
+       x = "Vegetation Type",
+       title = "Number of Deer Sighted in Different Vegetation")
+```
+
+From this plot you can see that the most number of deer sighted is in Grassland/Prairie vegetation. The second largest is Upland Forest vegetation. From this graph I will look into what type of vegetation each park has the most of to see if I can draw any conclusions.
+
+My final model is the same as the other but with Month.
+
+```{r}
+plot_lm5 <- lm(DeerNum ~ Month, data = clean_deer)
+summary(plot_lm5)
+```
+
+Like the other models the r-squared if small. The p-value for month 2 is a lot more significant than month 3.
+
+I decided to create a plot with the number of deer for each month that might explain this significance.
+
+```{r}
+plot4 <- clean_deer |>
+  group_by(Month)
+ggplot(plot4, aes(Month, DeerNum, fill = Month)) +
+  geom_col() +
+  scale_fill_manual(values = c("#FFB3C6", "#FF8FAB", "#FB6F92"))+
+  scale_x_discrete(labels = c("January", "February", "March")) +
+  theme_classic() +
+  guides(fill = "none") +
+  labs(y = "Number of Deer",
+       title = "Number of Deer for Each Month")
+```
+
+As you can see from the plot, month 3 has very little number of deer. This could be the reason for the low significance.

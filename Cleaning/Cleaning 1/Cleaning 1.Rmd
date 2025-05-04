@@ -1,0 +1,84 @@
+---
+title: "Cleaning 1"
+author: "Charlie Roth"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load Packages and Data
+
+I load the packages 'tidyverse' and 'viridisLite'. I then set my working directory with setwd() and loaded my data using read_csv() and named it "deer".
+
+```{r}
+library(tidyverse)
+
+deer <- read_csv("HTLN_WhiteTailedDeer_Monitoring.csv")
+```
+
+## Variable Selection
+
+I use select to remove the variables I won't be using for my project and create a new dataset, "deer2", with only the variables I will use.
+
+```{r}
+deer2 <- deer |>
+  select(ParkName, BeginningTemperatureInCelsius, BeginningPrecipitation, Year, DeerNumber, VegetationType, GPSDate, GPSTime, LongitudeInDecimalDegrees, LatitudeInDecimalDegrees)
+```
+
+## Checking for NAs
+
+I first use the function anyNA() to check for NAs in my dataset as a whole. The output result is "TRUE". This means that there are NAs in my dataset which I have to remove or fix. I then use the function anyNA() on each of my variables one by one until I get a "TRUE".
+
+```{r}
+anyNA(deer2)
+anyNA(deer2$ParkName)
+anyNA(deer2$BeginningTemperatureInCelsius)
+anyNA(deer2$BeginningPrecipitation)
+anyNA(deer2$Year)
+anyNA(deer2$DeerNumber)
+anyNA(deer2$VegetationType)
+anyNA(deer2$GPSDate)
+anyNA(deer2$GPSTime)
+```
+
+The result for the variable GPSTime was true so I remove the NAs using filter(). I then check for NAs in the whole dataset again to see if There are any more NAs in other variables.
+
+```{r}
+deer2 <- deer2 |>
+  filter(!is.na(GPSTime))
+anyNA(deer2)
+```
+
+The output is "FALSE" which means my dataset has no more NAs and I can stop the process of checking for them.
+
+## Formatting
+
+I decided to create a separate column of just month numbers using format() and as.Date().
+
+```{r}
+deer2$Month <- format(as.Date(deer2$GPSDate, format = "%m/%d/%Y"), "%m")
+print(deer2)
+```
+
+I also renamed some of the columns that had very long names as you can see below.
+
+```{r}
+deer2 <- deer2 |>
+  rename(BeginTempCelsius = BeginningTemperatureInCelsius,
+         BeginPrecip = BeginningPrecipitation,
+         DeerNum = DeerNumber,
+         VegType = VegetationType,
+         Long = LongitudeInDecimalDegrees,
+         Lat = LatitudeInDecimalDegrees)
+```
+
+After cleaning and formatting my data, I create a .csv file with the new data that I will use in my EDA.
+
+```{r}
+df <- data.frame(deer2)
+
+#write_csv(df, "C:/Users/asoph/OneDrive/Desktop/Spring 2025/DATA 205/Project/Cleaning/Cleaning 1/clean_deer.csv")
+```
