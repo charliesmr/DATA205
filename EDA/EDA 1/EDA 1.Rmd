@@ -1,5 +1,5 @@
 ---
-title: "DATA 205 EDA"
+title: "EDA 1"
 author: "Charlie Roth"
 date: "`r Sys.Date()`"
 output: pdf_document
