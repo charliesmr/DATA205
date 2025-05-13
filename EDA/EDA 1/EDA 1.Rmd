@@ -11,13 +11,12 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Load Packages and Data
 
-I load the packages 'tidyverse', 'viridisLite', and 'paletteer'. I then load my data using read_csv() and named it "clean_deer".
+I load the packages 'tidyverse', 'viridis', and 'paletteer'. I then load my data using read_csv() and named it "clean_deer".
 
 ```{r}
 library(tidyverse)
-library(viridisLite)
+library(viridis)
 library(paletteer)
-library(GGally)
 
 clean_deer <- read_csv("clean_deer.csv")
 ```
