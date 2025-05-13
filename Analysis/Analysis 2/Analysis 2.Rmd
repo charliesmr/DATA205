@@ -1,0 +1,62 @@
+---
+title: "Analysis 2"
+author: "Charlie Roth"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load Packages and Data
+
+I load the 'tidyverse' package and then load in my data using read_csv(), naming it "deer_data".
+
+```{r}
+library(tidyverse)
+deer_data <- read_csv("clean_deer.csv")
+```
+
+Next, I select the variables I will use for my analysis.
+
+```{r}
+deer_data2 <- deer_data |>
+  select(ParkName, DeerNum, VegType)
+```
+
+I use mutate() to rename the park names into shorter names.
+
+```{r}
+deer_data3 <- deer_data2 |>
+  mutate(ParkName = case_when(
+    ParkName == "Wilson's Creek National Battlefield" ~ "WC_Park",
+    ParkName == "Pea Ridge National Military Park" ~ "PR_Park",
+    ParkName == "Arkansas Post National Memorial" ~ "AP_Park"
+  ))
+```
+
+Then I create a contingency table for vegetation type in each park. The frequency is the number of deer sighted in that vegetation for each park.
+
+```{r}
+deer_tbl <- xtabs(DeerNum ~ VegType + ParkName, data = deer_data3)
+print(deer_tbl)
+```
+
+From this you can see that in Wilson's Creek the majority deer sighted is in grassland/prairie vegetation. For Pea Ridge, the majority of the deer were sighted in upland scrub or grassland/prairie. For Arkansas Post however, the majority deer is sighted in riparian forest. 
+
+I will performed a Chi-squared test to see if there is a significant relationship between vegetation and number of deer.
+
+```{r}
+chisq.test(deer_tbl)
+```
+
+From this Chi-squared test, you can see that the p-value is very small, and below the significance level (0.5).
+
+Since some values in the contingency table are low, the test gives me a warning that the approximation may be incorrect. To fix this, I perform a Chi-squared test with simulated values.
+
+```{r}
+chisq.test(deer_tbl, simulate.p.value = TRUE, B = 10000)
+```
+
+From this test, you can see that the p-value is still below the significance level. Based on these two tests, it's safe to say that there is a significant relationship between vegetation and number of deer.

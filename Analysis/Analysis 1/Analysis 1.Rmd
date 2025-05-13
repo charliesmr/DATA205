@@ -1,0 +1,87 @@
+---
+title: "Analysis 1"
+author: "Charlie Roth"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load Packages and Data
+
+I load the packages 'tidyverse' and 'GGally'. I then load my two datasets using read_csv() and name it "deer_pop" and "pop".
+
+```{r}
+library(tidyverse)
+library(GGally)
+
+deer_pop <- read_csv("deer_pop_data.csv")
+pop <- read_csv("final_pop_data.csv")
+```
+
+Next, I use the function spread() on my "pop" dataset to get wide data instead of long data.
+
+```{r}
+data_wide <- spread(pop, county, total_pop)
+```
+
+I do the same for "deer_pop" and rename the "Years" column to "years".
+
+```{r}
+data_wide2 <- spread(deer_pop, ParkName, DeerNum)
+data_wide2 <- data_wide2 |>
+  rename(years = "Years")
+```
+
+I did this so I can combine the datasets by the "years" column.
+
+```{r}
+merged_data <- left_join(data_wide2, data_wide, by = "years")
+```
+
+Next, I rename the columns to shorter names for easier analysis.
+
+```{r}
+merged_data <- merged_data |>
+  rename(AP_deer = "Arkansas Post National Memorial",
+         PR_deer = "Pea Ridge National Military Park",
+         WC_deer = "Wilson's Creek National Battlefield",
+         AP_human = "Arkansas County, Arkansas",
+         PR_human = "Benton County, Arkansas",
+         WC_human = "Christian/Greene Counties, Missouri")
+```
+
+I use ggpairs to get a pairwise plot to see any correlation between the variables.
+
+```{r}
+ggpairs(merged_data, columns = 2:7, progress = F)
+```
+
+You can see that the human populations are all correlated which makes sense. Arkansas Post's deer population and human population surrounding it are not very correlated at a -0.397. Pea Ridge's populations are slightly correlated at 0.633 and Wilson's Creek populations are very correlated at 0.958.
+
+To look further into this I decided to do linear regression models for each of the three parks.
+
+```{r}
+lm_model <- lm(AP_deer ~ AP_human, data = merged_data)
+summary(lm_model)
+```
+
+From this model you can see that the Adjusted R-squared if negative and the p-value is high. This is most likely due to the small sample size.
+
+```{r}
+lm_model <- lm(PR_deer ~ PR_human, data = merged_data)
+summary(lm_model)
+```
+
+Like Arkansas Post, Pea Ridge has a negative R-squared and a high p-value. Again I think this is most likely due to a small sample size.
+
+```{r}
+lm_model <- lm(WC_deer ~ WC_human, data = merged_data)
+summary(lm_model)
+```
+
+Unlike the other two, Wilson's Creek has a high R-squared. Like the other two the p-value is not significant.
+
+Based on the results from my analysis, I believe that the sample size is too small to make any conclusions on if deer population size is affected by human population size.
