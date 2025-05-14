@@ -10,9 +10,10 @@ The code explores weather variables, vegetation type, and human populations surr
 
 ## Repository Contents
 - [`CSV Files/`](CSV_Files/): All datasets that are used in the project
-- ['Cleaning/'](Cleaning/): .ipynb and .Rmd files used for cleaning the data
-- ['EDA/'](EDA/): Exploratory data analysis
-- ['Analysis/'](Analysis/): Final analysis for the project
-- ['Tableau Dashboard/'](Tableau_Dashboard/): Links to Tableau plots
-- ['Final Report/'](Final_Report/): Written report detailing the process and findings
-- ['Final Presentation/'](Final_Presentation/): Powerpoint slides
+- [`Cleaning/`](Cleaning/): .ipynb and .Rmd files used for cleaning the data
+- [`EDA/`](EDA/): Exploratory data analysis
+- [`Analysis/`](Analysis/): Final analysis for the project
+- [`Tableau Dashboard/`](Tableau_Dashboard/): Links to Tableau plots
+- [`Final Report/`](Final_Report/): Written report detailing the process and findings
+- [`Final Presentation/`](Final_Presentation/): Powerpoint slides
+The folders containing code also contain the dataset needed to run the code.
