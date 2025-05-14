@@ -6,6 +6,7 @@ This project goes over what factors might affect the population of White-Tailed 
 - Arkansas Post National Memorial, AR
 - Pea Ridge National Military Park, AR
 - Wilson's Creek National Battlefield, MO
+
 The code explores weather variables, vegetation type, and human populations surrounding the parks.
 
 ## Repository Contents
