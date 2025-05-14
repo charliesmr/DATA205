@@ -16,4 +16,5 @@ The code explores weather variables, vegetation type, and human populations surr
 - [`Tableau Dashboard/`](Tableau_Dashboard/): Links to Tableau plots
 - [`Final Report/`](Final_Report/): Written report detailing the process and findings
 - [`Final Presentation/`](Final_Presentation/): Powerpoint slides
+
 The folders containing code also contain the dataset needed to run the code.
