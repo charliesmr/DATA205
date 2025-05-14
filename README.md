@@ -13,6 +13,6 @@ The code explores weather variables, vegetation type, and human populations surr
 - ['Cleaning/'](Cleaning/): .ipynb and .Rmd files used for cleaning the data
 - ['EDA/'](EDA/): Exploratory data analysis
 - ['Analysis/'](Analysis/): Final analysis for the project
-- ['Tableau Dashboard/'](Tableau-Dashboard/): Links to Tableau plots
-- ['Final Report/'](Final-Report/): Written report detailing the process and findings
-- ['Final Presentation/'](Final-Presentation/): Powerpoint slides
+- ['Tableau Dashboard/'](Tableau_Dashboard/): Links to Tableau plots
+- ['Final Report/'](Final_Report/): Written report detailing the process and findings
+- ['Final Presentation/'](Final_Presentation/): Powerpoint slides
