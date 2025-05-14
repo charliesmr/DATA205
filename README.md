@@ -9,7 +9,7 @@ This project goes over what factors might affect the population of White-Tailed 
 The code explores weather variables, vegetation type, and human populations surrounding the parks.
 
 ## Repository Contents
-- [`CSV Files/`](CSV-Files/): All datasets that are used in the project
+- [`CSV Files/`]([CSV Files]/): All datasets that are used in the project
 - ['Cleaning/'](Cleaning/): .ipynb and .Rmd files used for cleaning the data
 - ['EDA/'](EDA/): Exploratory data analysis
 - ['Analysis/'](Analysis/): Final analysis for the project
